@@ -1,49 +1,59 @@
-
-
-
-
 import streamlit as st
-from PIL import Image
-import numpy as np
-import cv2
-from ultralytics import YOLO
+import tensorflow as tf
+import joblib
+import re
+from bs4 import BeautifulSoup
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# ضبط إعدادات الصفحة
-st.set_page_config(page_title="Face Mask Detection", page_icon="😷")
+nltk.download('stopwords')
+nltk.download('wordnet')
 
-st.title("😷 Face Mask Detection System")
-st.write("Upload an image to detect whether people are wearing masks or not.")
+st.set_page_config(page_title="MailGuard - Spam Detector", page_icon="📧", layout="centered")
 
-# تحميل النموذج (قم بتغيير 'best.pt' إلى مسار نموذج YOLO الخاص بك)
 @st.cache_resource
-def load_model():
-    return YOLO("best.pt")
+def load_assets():
+    model = tf.keras.models.load_model('gru_spam_model.keras')
+    tokenizer = joblib.load('tokenizer.pkl')
+    return model, tokenizer
 
 try:
-    model = load_model()
+    model, tokenizer = load_assets()
+    lemmatizer = WordNetLemmatizer()
+    stop_words = set(stopwords.words('english'))
 except Exception as e:
-    st.error("لم يتم العثور على ملف النموذج، يرجى التأكد من وجود ملف النموذج (مثل best.pt) في المجلد.")
+    st.error(f"Error loading model files: {e}")
 
-# أداة رفع الصور
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+def clean_text(text):
+    text = BeautifulSoup(text, "html.parser").get_text()
+    text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    text = text.lower()
+    words = text.split()
+    words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
+    return " ".join(words)
 
-if uploaded_file is not None:
-    # قراءة الصورة بواسطة PIL
-    image = Image.open(uploaded_file)
-    
-    # عرض الصورة الأصلية باستخدام use_container_width المصححة
-    st.image(image, caption="Uploaded Image", use_container_width=True)
-    
-    if st.button("Detect Mask"):
-        with st.spinner("Processing image..."):
-            # تحويل الصورة إلى مصفوفة Numpy لـ OpenCV / YOLO
-            img_array = np.array(image.convert("RGB"))
-            
-            # تشغيل نموذج YOLO للتعرف على الكمامات
-            results = model(img_array)
-            
-            # رسم النتائج على الصورة
-            res_plotted = results[0].plot()
-            
-            # عرض الصورة بعد الاكتشاف
-            st.image(res_plotted, caption="Detection Result", use_container_width=True)
+st.title("📧 MailGuard: Spam Detection System")
+st.write("Enter an email or message below to check whether it's **Spam** or **Ham** using our GRU Model.")
+
+user_input = st.text_area("Message Content:", placeholder="Paste your email text here...", height=150)
+
+if st.button("Classify Message", type="primary"):
+    if user_input.strip() == "":
+        st.warning("Please enter a valid message.")
+    else:
+        cleaned_input = clean_text(user_input)
+        seq = tokenizer.texts_to_sequences([cleaned_input])
+        padded_seq = pad_sequences(seq, maxlen=250, padding='post', truncating='post')
+        
+        prediction_prob = model.predict(padded_seq)[0][0]
+        
+        threshold = 0.16 
+        
+        st.divider()
+        if prediction_prob >= threshold:
+            st.error(f"🚨 **SPAM DETECTED** (Probability: {prediction_prob:.2%})")
+        else:
+            st.success(f"✅ **HAM (Legitimate Message)** (Spam Probability: {prediction_prob:.2%})")

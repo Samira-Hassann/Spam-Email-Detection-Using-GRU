@@ -9,7 +9,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 # Configuration
 # =========================
 
-MODEL_PATH = "model.keras"
+MODEL_PATH = "gru_spam_model.keras"
 TOKENIZER_PATH = "tokenizer.pkl"
 
 MAX_LEN = 250

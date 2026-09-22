@@ -13,6 +13,13 @@ This project builds an end-to-end spam classification pipeline:
 The final model was selected after comparing it with a traditional **TF-IDF + Logistic Regression baseline**.
 
 ---
+## 🚀 Project Links
+
+| Resource | Link |
+|----------|------|
+| 📓 Kaggle Notebook | [View Notebook](https://www.kaggle.com/code/samoura/spam-detection) |
+| 🌐 Live Demo | [Try the App](https://spam-email-detection-gru.streamlit.app/) |
+---
 
 ## 🧠 Model Architecture
 

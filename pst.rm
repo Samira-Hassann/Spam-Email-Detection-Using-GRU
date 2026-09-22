@@ -1,1 +1,34 @@
 
+📩 **Spam Email Detection using GRU**
+
+I’m excited to share one of my latest NLP projects: a **Spam Email Detection system using Word2Vec and GRU**.
+
+In this project, I built and compared:
+
+🔹 **TF-IDF + Logistic Regression** as a baseline
+🔹 **Word2Vec + GRU** for sequence-based text classification
+
+The final GRU model achieved:
+
+📊 **98.74% Test Accuracy**
+🎯 **0.95 F1-score for Spam**
+📈 **0.99 Precision for Spam**
+🔍 **0.91 Recall for Spam**
+
+I also performed **threshold tuning** to improve the model's classification behavior and selected a threshold of **0.16** based on validation F1-score.
+
+The project is deployed as an interactive **Streamlit application**, where users can enter a message and get a Spam/Ham prediction.
+
+🔗 **Project Repository:**
+https://github.com/Samira-Hassann/Spam-Email-Detection-Using-GRU
+
+📓 **Kaggle Notebook:**
+https://www.kaggle.com/code/samoura/spam-detection
+
+🚀 **Live Demo:**
+https://spam-email-detection-gru.streamlit.app/
+
+🛠️ **Technologies:**
+Python | NLP | Word2Vec | GRU | TensorFlow/Keras | Scikit-learn | Streamlit
+
+#MachineLearning #NLP #DeepLearning #Python #TensorFlow #GRU #Word2Vec #DataScience #AI #Streamlit

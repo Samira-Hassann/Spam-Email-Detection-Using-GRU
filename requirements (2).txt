@@ -1,5 +1,0 @@
-streamlit
-tensorflow
-pillow
-numpy
-python-3.11

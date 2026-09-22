@@ -3,4 +3,3 @@ tensorflow
 numpy
 scikit-learn
 dill
-pickle

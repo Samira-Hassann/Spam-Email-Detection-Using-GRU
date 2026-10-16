@@ -116,19 +116,10 @@ if st.button("🔍 Analyze Message", use_container_width=True):
 
             st.error("🚨 SPAM")
 
-            st.metric(
-                "Spam Probability",
-                f"{probability:.2%}"
-            )
 
         else:
 
             st.success("✅ HAM")
-
-            st.metric(
-                "Spam Probability",
-                f"{probability:.2%}"
-            )
 
         st.caption(
             f"Classification threshold: {THRESHOLD}"
